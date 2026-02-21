@@ -2,7 +2,8 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
-    Home, Bus, Calendar, Users, Settings, LogOut, MapPin, BarChart3, ChevronRight, History
+    Home, Bus, Calendar, Users, Settings, LogOut, MapPin, BarChart3, ChevronRight, History,
+    ChevronLeft
 } from 'lucide-react';
 
 const Sidebar = () => {
