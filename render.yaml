@@ -1,9 +1,9 @@
 services:
   - type: web
     name: kijangwan-backend
-    env: python
+    runtime: python
     rootDir: backend
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
     startCommand: python manage.py migrate && gunicorn config.wsgi:application
     envVars:
       - key: PYTHON_VERSION
@@ -16,13 +16,18 @@ services:
         value: "False"
       - key: ALLOWED_HOSTS
         value: ".onrender.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://kijangwan-backend.onrender.com"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://kijangwan-frontend.onrender.com"
       - key: DATABASE_URL
         fromDatabase:
           name: kijangwan-db
           property: connectionString
 
-  - type: static
+  - type: web
     name: kijangwan-frontend
+    runtime: static
     rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
