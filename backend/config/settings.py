@@ -30,15 +30,18 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
+def split_csv_env(var_name: str, default: str = ''):
+    raw = os.getenv(var_name, default)
+    return [item.strip() for item in raw.split(',') if item.strip()]
+
 ALLOWED_HOSTS = [
     host.strip() for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if host.strip()
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-    origin.strip()
-    for origin in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
-    if origin.strip()
-]
+CSRF_TRUSTED_ORIGINS = split_csv_env(
+    'CSRF_TRUSTED_ORIGINS',
+    'https://kijangwan-backend.onrender.com,https://kijangwanimanagementsystem.vercel.app',
+)
 
 
 # Application definition
@@ -144,8 +147,12 @@ AUTH_USER_MODEL = 'core.User'
 
 # CORS Settings
 CORS_ALLOW_ALL_ORIGINS = DEBUG
-CORS_ALLOWED_ORIGINS = [
-    origin.strip() for origin in os.getenv('CORS_ALLOWED_ORIGINS', '').split(',') if origin.strip()
+CORS_ALLOWED_ORIGINS = split_csv_env(
+    'CORS_ALLOWED_ORIGINS',
+    'https://kijangwanimanagementsystem.vercel.app,https://kijangwan-backend.onrender.com',
+)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
