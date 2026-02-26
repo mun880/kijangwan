@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {jwtDecode} from 'jwt-decode';
 
-const API_URL = 'http://localhost:8000/api';
+const API_URL = (import.meta.env.VITE_API_URL || 'https://kijangwan-backend.onrender.com/api').replace(/\/+$/, '');
 
 const api = axios.create({
   baseURL: API_URL,
