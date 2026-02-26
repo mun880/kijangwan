@@ -14,9 +14,11 @@ import os
 from pathlib import Path
 
 import dj_database_url
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -94,12 +96,13 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 database_url = os.getenv('DATABASE_URL', '').strip()
-database_config_kwargs = {'conn_max_age': 600}
+if not database_url:
+    raise RuntimeError('DATABASE_URL is required and must point to your Neon PostgreSQL database.')
 
-if database_url:
-    database_config_kwargs['default'] = database_url
-else:
-    database_config_kwargs['default'] = f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+database_config_kwargs = {
+    'default': database_url,
+    'conn_max_age': 600,
+}
 
 if database_url.startswith(('postgres://', 'postgresql://')):
     database_config_kwargs['ssl_require'] = True
