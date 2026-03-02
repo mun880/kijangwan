@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, include, NoReverseMatch
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -21,17 +21,23 @@ router.register(r'logs', SystemLogViewSet, basename='systemlog')
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def api_root(request, format=None):
+    def safe_reverse(name):
+        try:
+            return reverse(name, request=request, format=format)
+        except NoReverseMatch:
+            return None
+
     return Response({
-        'auth_token': reverse('token_obtain_pair', request=request, format=format),
-        'auth_token_refresh': reverse('token_refresh', request=request, format=format),
-        'driver_register': reverse('driver_register', request=request, format=format),
-        'passenger_register': reverse('passenger_register', request=request, format=format),
-        'stats': reverse('stats', request=request, format=format),
-        'drivers': reverse('driver-list', request=request, format=format),
-        'routes': reverse('route-list', request=request, format=format),
-        'vehicles': reverse('vehicle-list', request=request, format=format),
-        'schedules': reverse('schedule-list', request=request, format=format),
-        'logs': reverse('systemlog-list', request=request, format=format),
+        'auth_token': safe_reverse('token_obtain_pair'),
+        'auth_token_refresh': safe_reverse('token_refresh'),
+        'driver_register': safe_reverse('driver_register'),
+        'passenger_register': safe_reverse('passenger_register'),
+        'stats': safe_reverse('stats'),
+        'drivers': safe_reverse('driverprofile-list'),
+        'routes': safe_reverse('route-list'),
+        'vehicles': safe_reverse('vehicle-list'),
+        'schedules': safe_reverse('schedule-list'),
+        'logs': safe_reverse('systemlog-list'),
     })
 
 urlpatterns = [
